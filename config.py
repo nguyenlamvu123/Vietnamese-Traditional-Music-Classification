@@ -1,18 +1,20 @@
 import os
 
 # Define directories
-RAW_ROOT = 'rawdata'
-FOLDER_ROOT = "mel-images"
-DATASET_ROOT = "dataset"
-TRAIN_ROOT = "dataset\\train"
-VAL_ROOT = "dataset\\val"
-TEST_ROOT = "dataset\\test"
-CHECKPOINT_FILEPATH = 'checkpoint'
-SAVED_MODEL_PATH = 'model'
-TEST_AUDIO_PATH = "test_audio"
-TEST_IMAGES_ROOT = "test_images"    # Store mel-spec img of new audio to predict
-AUDIO_FROM_USER = "audio_from_user" # Store audio uploaded from user in app
+path = os.path.dirname(__file__)
+RAW_ROOT = os.path.join(path, 'rawdata')
+FOLDER_ROOT = os.path.join(path, "mel-images")
+DATASET_ROOT = os.path.join(path, "dataset")
+TRAIN_ROOT = os.path.join(path, "dataset", "train")
+VAL_ROOT = os.path.join(path, "dataset", "val")
+TEST_ROOT = os.path.join(path, "dataset", "test")
+CHECKPOINT_FILEPATH = os.path.join(path, 'checkpoint')
+SAVED_MODEL_PATH = os.path.join(path, 'model')
+TEST_AUDIO_PATH = os.path.join(path, "test_audio")
+TEST_IMAGES_ROOT = os.path.join(path, "test_images")  # Store mel-spec img of new audio to predict
+AUDIO_FROM_USER = os.path.join(path, "audio_from_user")  # Store audio uploaded from user in app
 
+demo = False
 
 # For testing create these below folders
 # RAW_ROOT = 'rawdata'
@@ -32,21 +34,15 @@ AUDIO_FROM_USER = "audio_from_user" # Store audio uploaded from user in app
 type_list = {0: ["cailuong", "CaiLuong"], 1: ["catru", "Catru"], 2:["chauvan", "Chauvan"], 3: ["cheo", "Cheo"], 4: ["hatxam", "Xam"]}
 class_list = {0: "Cải lương", 1: "Ca trù", 2:"Chầu văn", 3: "Chèo", 4: "Hát xẩm"}
 
-
-
 # Define processing parameters
 SR = 22050
 N_FFT = 2048
 HOP_LENGTH = 512
 
-
-
 # Train/Val/Test split
 TRAIN_RATE = 0.75
 VAL_RATE = 0.15
 TEST_RATE = 0.1
-
-
 
 # Input/ Output
 N_CLASS = 5
@@ -66,25 +62,21 @@ WIDTH_SHIFT_RANGE = 0.05
 HEIGHT_SHIFT_RANGE = 0.05
 ZOOM_RANGE = 0.025
 
-
 # Checkpoint configs
-CHECKPOINT_MONITOR = "val_accuracy"         # val_loss
-
+CHECKPOINT_MONITOR = "val_accuracy"  # val_loss
 
 # Early stopping configs
 PATIENCE = 5
 VERBOSE = 1
 EARLY_MONITOR = "loss"
 
-
-
 # Model config
 OPTIMIZER = "adam"  # rmsrop, sgd
 METRICS = ["accuracy"]   # tf.Metrics.Precision(), #tf.Metrics.Recall
 LOSS ='categorical_crossentropy' # ...
 BATCH_SIZE = 32
-EPOCHS = 5
 VALIDATION_BATCH_SIZE = 32
+EPOCHS = 3 if demo else 300
 
 
 # EXCEL URL

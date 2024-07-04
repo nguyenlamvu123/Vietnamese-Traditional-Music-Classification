@@ -31,7 +31,7 @@ class Preprocessing():
         Return:
         - Samples: Dictionary {index: {"dir": "/...."}}
         """
-        def padding(index):
+        def padding(index):  # TODO
             # Padding
             if 0 <= index < 10:
                 index = "00" +str(index)
@@ -39,19 +39,19 @@ class Preprocessing():
                 index = "0" +str(index)
             return index
         for i in range(0, self.num_of_samples):
-            if mode == "random": # Mode load random samples
+            if mode == "random":  # Mode load random samples
                 random_index = np.random.randint(0, 500)
                 index = random_index
                 self.samples[index] = {}  # For futher append values
                 random_index = padding(random_index)
-                self.samples[index]["dir"] = self.root + "\\"  + type_list[self.type_index][0] + "\\" + type_list[self.type_index][1] + "." + str(random_index) + ".wav"
+                self.samples[index]["dir"] = self.root + os.sep  + type_list[self.type_index][0] + os.sep + type_list[self.type_index][1] + "." + str(random_index) + ".wav"
                 # self.samples_list[index]["dir"] = (os.path.join(self.root, type_list[self.type_index][0], type_list[self.type_index][1] + "." + str(random_index) + ".wav"))
             
-            if mode == "all":  # Mode load all samples
+            elif mode == "all":  # Mode load all samples
                 index = i
                 self.samples[index] = {}
                 i = padding(i)
-                self.samples[index]["dir"] = self.root + "\\"  + type_list[self.type_index][0] + "\\" + type_list[self.type_index][1] + "." + str(i) + ".wav"
+                self.samples[index]["dir"] = self.root + os.sep  + type_list[self.type_index][0] + os.sep + type_list[self.type_index][1] + "." + str(i) + ".wav"
                 # self.samples[index]["dir"] = os.path.join(self.root, type_list[self.type_index][0], type_list[self.type_index][1] + "." + str(i) + ".wav")
 
         return self.samples
@@ -64,7 +64,11 @@ class Preprocessing():
         Output: samples_listdir - Dictionary {index: {"dir": "/....", "sampling": array}}
         """
         for index, sample in self.samples.items():
-            file, sr = lb.load(sample["dir"])
+            fil = sample["dir"]
+            if not os.path.isfile(fil):  # No such file or directory: 'rawdata/catru/Catru.089.wav'
+                print(f'@@@@@@@@@@@@@@@@@ No such file or directory: {fil}')
+                continue
+            file, sr = lb.load(fil)  # TODO
             if len(self.samples[index]) == 1:  # Avoid adding multiple times
                 self.samples[index]["sampling"] = file
         return self.samples
@@ -76,6 +80,9 @@ class Preprocessing():
         Output: samples: {index: {"dir": "/...", "stft:" array}}
         """
         for index, item in self.samples.items():
+            if not "sampling" in item:  # KeyError: 'sampling' (<- 'rawdata/catru/Catru.089.wav')
+                print(f'@@@@@@@@@@@@@@@@ KeyError: "sampling" in {item["dir"]}')
+                continue
             # Get STFT
             D = np.abs(lb.stft(item["sampling"], n_fft = n_fft, hop_length = hop_length))
             self.samples[index]["stft"] = D
@@ -89,6 +96,9 @@ class Preprocessing():
         Output: {index: {"dir": "/...", "sampling": array, "stft": array, "mel-spec-db": array}}
         """
         for index, item in self.samples.items():
+            if not "sampling" in item:  # KeyError: 'sampling' (<- 'rawdata/catru/Catru.089.wav')
+                print(f'@@@@@@@@@@@@@@@ KeyError: "sampling" in {item["dir"]}')
+                continue
             S = lb.feature.melspectrogram(y = item["sampling"], sr = sr)
             S_db = lb.amplitude_to_db(S, ref=np.max)
             self.samples[index]["mel-spec-db"] = S_db
@@ -101,15 +111,18 @@ class Preprocessing():
         """
 
         for _, item in self.samples.items():
+            if not "mel-spec-db" in item:  # KeyError: 'sampling' (<- 'rawdata/catru/Catru.089.wav')
+                print(f'@@@@@@@@@@@@@@@ KeyError: "mel-spec-db" in {item["dir"]}')
+                continue
             S_db = item["mel-spec-db"]
-            images_root = self.save_root + "\\" + type_list[self.type_index][0]
+            images_root = self.save_root + os.sep + type_list[self.type_index][0]
             if not os.path.exists(images_root):
                 os.makedirs(images_root)
                 print("Create new root: {}".format(images_root))
             # Get file name from fir
-            file_name = item["dir"].split("\\")[-1][:-4]
-            plt.imsave(images_root + "\\{}".format(file_name) + ".png", S_db)
-            print("Saved {}".format(images_root + "\\{}".format(file_name) + ".png"))
+            file_name = item["dir"].split(os.sep)[-1][:-4]
+            plt.imsave(f'{images_root}{os.sep}{file_name}.png', S_db)
+            print("Saved {}".format(f'{images_root}{os.sep}{file_name}.png'))
 
 
 
