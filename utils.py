@@ -14,8 +14,6 @@ from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from pydub import AudioSegment
 
 
-
-
 def plot_waveform(samples, type_index, sr = SR):
     """
     Waveform plot of samples
@@ -24,8 +22,59 @@ def plot_waveform(samples, type_index, sr = SR):
     color = random.choice(["blue", "red", "yellow", "brown", "purple"])
     for index, sample in samples.items():
       plt.figure(figsize = (16, 5))
-      lb.display.waveshow(y = sample["sampling"], sr = sr, color = color);
-      plt.title("Sound Waves of sample {} of class {}".format(index, type_list[type_index][0]), fontsize = 23);
+      lb.display.waveshow(y = sample["sampling"], sr = sr, color = color)
+      plt.title("Sound Waves of sample {} of class {}".format(index, type_list[type_index][0]), fontsize = 23)
+
+
+def mp3_2_wav(dir, dst, sample_rate = SR):
+    """
+    Convert mp3 to wav and save wav file to dst
+    Input: dir (mp3)
+    """
+    # convert wav to mp3.
+    sound = AudioSegment.from_mp3(dir)
+    sound.set_frame_rate(sample_rate)
+    sound.export(dst, format="wav")
+
+
+def break_down_downloaded_data(
+        originaldata=os.path.join('/', 'home', 'zaibachkhoa', 'Downloads', 'GTZAN Dataset - Music Genre Classification', 'genres_original_vnmesemusi_cachmang-nhactre-thieunhi-trutinh', 'genres_original_'),
+        rawdata='rawdata',
+):
+    "breaks down data into a series of 30 seconds song"
+    for theloai_ in os.listdir(originaldata):
+        theloai = theloai_.replace('_', '')
+        os.mkdir(os.path.join(rawdata, theloai))
+        i = 0
+        for baihat in os.listdir(os.path.join(originaldata, theloai_)):
+            if not baihat.endswith('.mp3'):
+                print('@@@@@@@@@@@@@@@@@@', baihat)
+                continue
+            dir = os.path.join(originaldata, theloai_, baihat)
+            dst = os.path.join(originaldata, theloai_, baihat[:-len('.mp3')] + '.wav')
+            mp3_2_wav(dir, dst)
+            newAudio = AudioSegment.from_wav(dst)
+            i_ = 0
+            t1 = 0
+            # print(newAudio.duration_seconds)  # print(type(newAudio.duration_seconds))  # float
+            while t1 < newAudio.duration_seconds:
+                t1 = i_ * 30 * 1000  # Works in milliseconds
+                t2 = (i_ + 1) * 30
+                if t2 > int(newAudio.duration_seconds):
+                    break
+                t2 *= 1000
+                newAudio_ = newAudio[t1:t2]
+                newAudio_.export(os.path.join(rawdata, theloai, f'{theloai}.{str(i).zfill(3)}.wav'), format="wav")
+                del newAudio_
+                i += 1
+                if i > 499:
+                    break
+                i_ += 1
+                t1 /= 1000
+            os.remove(dst)
+            print(f'{dir}_______{i}')
+            if i > 499:
+                break
 
 
 
@@ -68,24 +117,24 @@ def train_val_test_split(folder_root, dataset_root, type_index):
     """
 
     def save_set(subset, dataset_root, typeset, type_index):
-      """
-      Save X_train, X_val, X_test to their respective dir
-      Input:
-        - subset - X_train, X_val, X_test
-        - dataset_root: Directory to save dataset
-        - typeset - train, val, test
-        - type index - Class index
-      """
-      # Copy file from subset to train/val/test folder
-      for file in subset:
-          srcpath = os.path.join(src_dir, file)
-          dst_dir = dataset_root + "\\" + typeset + "\\{}".format(type_list[type_index][0])
-          if not os.path.exists(dst_dir):
-              os.makedirs(dst_dir)
-          shutil.copy(srcpath, dst_dir)
+        """
+        Save X_train, X_val, X_test to their respective dir
+        Input:
+          - subset - X_train, X_val, X_test
+          - dataset_root: Directory to save dataset
+          - typeset - train, val, test
+          - type index - Class index
+        """
+        # Copy file from subset to train/val/test folder
+        for file in subset:
+            srcpath = os.path.join(src_dir, file)
+            dst_dir = os.path.join(dataset_root, typeset, type_list[type_index][0])
+            if not os.path.exists(dst_dir):
+                os.makedirs(dst_dir)
+            shutil.copy(srcpath, dst_dir)
 
 
-    src_dir = folder_root + "\\{}".format(type_list[type_index][0])
+    src_dir = os.path.join(folder_root, type_list[type_index][0])
     X = os.listdir(src_dir)
     Y = ["{}".format(type_list[type_index][0]) for i in range(0, len(X))]
 
@@ -142,7 +191,7 @@ def predict(file_names, labels, class_list, typeset, model):
     y_pred_index = []
     y_class_pred = []
     for file in file_names:
-        file_root = DATASET_ROOT + "\\" + typeset + "\\" + str(file)
+        file_root = os.path.join(DATASET_ROOT, typeset, str(file))
         image = load_img(file_root, target_size=(INPUT_SHAPE[0], INPUT_SHAPE[1], 3))
         image_array = img_to_array(image)
         image_array = image_array * 1./255
@@ -163,11 +212,11 @@ def get_cfm(y_pred, labels, class_list, typeset):
     """
     ax= plt.subplot()
     cfm = confusion_matrix(y_pred, labels)
-    sns.heatmap(cfm, annot=True, fmt='g', ax=ax);  #annot=True to annotate cells, ftm='g' to disable scientific notation
+    sns.heatmap(cfm, annot=True, fmt='g', ax=ax)  # annot=True to annotate cells, ftm='g' to disable scientific notation
 
     # labels, title and ticks
-    ax.set_xlabel('Predicted labels'); ax.set_ylabel('True labels');
-    ax.set_title('Confusion Matrix on {} set'.format(typeset), fontsize = 20);
+    ax.set_xlabel('Predicted labels'); ax.set_ylabel('True labels')
+    ax.set_title('Confusion Matrix on {} set'.format(typeset), fontsize = 20)
     ax.xaxis.set_ticklabels(list(class_list.values()))
     ax.yaxis.set_ticklabels(list(class_list.values()))
     plt.show()
@@ -232,17 +281,6 @@ def predict_new(audio_dir, src_folder, model, save_dir, unit_length = 661500):
     - y_pred_class: Respective class predicted of y_pred_index
     """
 
-    def mp3_2_wav(dir, dst, sample_rate = SR):
-        """
-        Convert mp3 to wav and save wav file to dst
-        Input: dir (mp3)
-        """
-        # convert wav to mp3.
-        sound = AudioSegment.from_mp3(dir)
-        sound.set_frame_rate(sample_rate)
-        sound.export(dst, format="wav")
-
-
     def process(samples_split, save_dir, file_name, is_saved):
         """
         End to end processing steps of each audio
@@ -262,7 +300,7 @@ def predict_new(audio_dir, src_folder, model, save_dir, unit_length = 661500):
             S_db = lb.amplitude_to_db(S, ref=np.max)
             if not os.path.exists(save_dir):
                 os.makedirs(save_dir)
-            sample_root = save_dir + "\\{}".format(file_name) + "_sample{}".format(i) + ".png"
+            sample_root = os.path.join(save_dir, f'{file_name}_sample{i}.png')
             plt.imsave(sample_root, S_db)
             image = load_img(sample_root, target_size=(INPUT_SHAPE[0], INPUT_SHAPE[1], 3))
             img_array = img_to_array(image)
@@ -271,7 +309,7 @@ def predict_new(audio_dir, src_folder, model, save_dir, unit_length = 661500):
             if not is_saved: # Not save mode
                 for file in os.listdir(save_dir):
                     if file.endswith('.png'):
-                        os.remove(save_dir + '\\' + file)
+                        os.remove(os.path.join(save_dir, file))
         return np.array(samples_db_list)
 
     # Define result
@@ -285,9 +323,9 @@ def predict_new(audio_dir, src_folder, model, save_dir, unit_length = 661500):
     for dir in audio_dir:
         if dir.endswith(".mp3"):
             print("Convert {} to .wav".format(dir))
-            wav_dir = src_folder + "\\" + dir.split("\\")[-1][:-4] + ".wav"    # src_folder = TEST_AUDIO_PATH (trainning), AUDIO_FROM_USER (web)
+            wav_dir = os.path.join(src_folder, dir.split(os.sep)[-1][:-4] + ".wav")  # src_folder = TEST_AUDIO_PATH (trainning), AUDIO_FROM_USER (web)
             mp3_2_wav(dir, wav_dir)
-            dir = wav_dir       # Take wav dir for sampling
+            dir = wav_dir  # Take wav dir for sampling
         audio, sr = lb.load(dir)
         if (len(audio) >= unit_length):
             # Number of sample of each audio
@@ -302,7 +340,7 @@ def predict_new(audio_dir, src_folder, model, save_dir, unit_length = 661500):
                 break
             samples_split.append(audio[i * unit_length : i * unit_length + unit_length])
 
-        file_name = dir.split("\\")[-1][:-4]
+        file_name = dir.split(os.sep)[-1][:-4]
 
         input_data = process(samples_split, save_dir, file_name, False)
 
@@ -339,17 +377,6 @@ def PROD_predict(audio_dir, src_folder, save_dir, model1, model2, model3, unit_l
     - y_pred_class: Respective class predicted of y_pred_index
     """
 
-    def mp3_2_wav(dir, dst, sample_rate = 22050):
-        """
-        Convert mp3 to wav and save wav file to dst
-        Input: dir (mp3)
-        """
-        # convert wav to mp3.
-        sound = AudioSegment.from_mp3(dir)
-        sound.set_frame_rate(sample_rate)
-        sound.export(dst, format="wav")
-
-
     def process(samples_split, save_dir, file_name, is_saved):
         """
         End to end processing steps of each audio
@@ -368,16 +395,16 @@ def PROD_predict(audio_dir, src_folder, save_dir, model1, model2, model3, unit_l
             S_db = lb.amplitude_to_db(S, ref=np.max)
             if not os.path.exists(save_dir):
                 os.makedirs(save_dir)
-            sample_root = save_dir + "\\{}".format(file_name) + "_sample{}".format(i) + ".png"
+            sample_root = os.path.join(save_dir, f"{file_name}_sample{i}.png")
             plt.imsave(sample_root, S_db)
             image = load_img(sample_root, target_size=(INPUT_SHAPE[0], INPUT_SHAPE[1], 3))
             img_array = img_to_array(image)
             img_array = img_array / 255
             samples_db_list.append(img_array)
-            if not is_saved: # Not save mode
+            if not is_saved:  # Not save mode
                 for file in os.listdir(save_dir):
                     if file.endswith('.png'):
-                        os.remove(save_dir + "\\" + file)
+                        os.remove(os.path.join(save_dir, file))
         return np.array(samples_db_list)
 
     # Define result
@@ -391,7 +418,7 @@ def PROD_predict(audio_dir, src_folder, save_dir, model1, model2, model3, unit_l
     for dir in audio_dir:
         if dir.endswith(".mp3"):
             # Get file name
-            wav_dir = src_folder + "\\" + dir.split("\\")[-1][:-4] + ".wav"
+            wav_dir = os.path.join(src_folder, dir.split(os.sep)[-1][:-4] + ".wav")
             mp3_2_wav(dir, wav_dir)
             dir = wav_dir       # Take wav dir for sampling
         print(dir)
@@ -437,4 +464,3 @@ def PROD_predict(audio_dir, src_folder, save_dir, model1, model2, model3, unit_l
         samples_split = []
 
     return y_pred_index, y_pred_class
-
