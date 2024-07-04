@@ -46,7 +46,7 @@ class Preprocessing():
                 index = i
                 self.samples[index] = {}
                 i = padding(i)
-                self.samples[index]["dir"] = self.root + os.sep  + type_list[self.type_index][0] + os.sep + type_list[self.type_index][1] + "." + i + ".wav"
+                self.samples[index]["dir"] = self.root + os.sep + type_list[self.type_index][0] + os.sep + type_list[self.type_index][1] + "." + i + ".wav"
                 # self.samples[index]["dir"] = os.path.join(self.root, type_list[self.type_index][0], type_list[self.type_index][1] + "." + i + ".wav")
 
         return self.samples

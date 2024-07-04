@@ -35,7 +35,7 @@ def Validation_plot(model_index, history):
     plt.savefig(os.path.join(SAVED_MODEL_PATH, f'Validation_plot_{model_index}.jpg'))
 
 
-def load_best_model(model_index, val_set):
+def load_best_model(model_index, val_set=None):
     """
     Load best model after training
     model_index = {1, 2, 3} - Load best model with highest val_acc of model1, 2, 3
@@ -67,8 +67,9 @@ def load_best_model(model_index, val_set):
     best_model = tf.keras.models.load_model(f'{SAVED_MODEL_PATH}{os.sep}best_model_{model_index}.keras')
 
     best_model.compile(loss = LOSS, optimizer = OPTIMIZER, metrics=metrics)
-    print("The best model's metrics: ")
-    best_model.evaluate(val_set)
+    if val_set is not None:
+        print("The best model's metrics: ")
+        best_model.evaluate(val_set)
     return best_model
 
 def train_model(model_index, train_set, val_set, test_set):
