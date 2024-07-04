@@ -41,7 +41,7 @@ def break_down_downloaded_data(
         originaldata=os.path.join('/', 'home', 'zaibachkhoa', 'Downloads', 'GTZAN Dataset - Music Genre Classification', 'genres_original_vnmesemusi_cachmang-nhactre-thieunhi-trutinh', 'genres_original_'),
         rawdata='rawdata',
 ):
-    "breaks down data into a series of 30 seconds song"
+    "breaks down data into series of 30 seconds songs"
     for theloai_ in os.listdir(originaldata):
         theloai = theloai_.replace('_', '')
         os.mkdir(os.path.join(rawdata, theloai))
