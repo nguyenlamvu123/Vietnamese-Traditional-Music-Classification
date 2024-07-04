@@ -466,5 +466,3 @@ def PROD_predict(audio_dir, src_folder, save_dir, model1, model2, model3, unit_l
         samples_split = []
 
     return (y_pred_index, y_pred_class) if not gra else {k: v for k, v in resdic.items() if v}
-
-    return y_pred_index, y_pred_class
