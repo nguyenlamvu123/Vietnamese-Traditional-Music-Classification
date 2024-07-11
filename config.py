@@ -31,8 +31,19 @@ demo = False
 
 
 # Define global variable
-type_list = {0: ["cailuong", "CaiLuong"], 1: ["catru", "Catru"], 2:["chauvan", "Chauvan"], 3: ["cheo", "Cheo"], 4: ["hatxam", "Xam"]}
-class_list = {0: "Cải lương", 1: "Ca trù", 2:"Chầu văn", 3: "Chèo", 4: "Hát xẩm"}
+danhmuc: tuple = (
+    ["cailuong", "CaiLuong", "Cải lương", ],
+    ["catru", "Catru", "Ca trù", ],
+    ["chauvan", "Chauvan", "Chầu văn", ],
+    ["cheo", "Cheo", "Chèo", ],
+    ["hatxam", "Xam", "Hát xẩm", ],
+    ["cachmang", "cachmang", "Cách mạng", ],
+    ["nhactre", "nhactre", "Nhạc trẻ", ],
+    ["thieunhi", "thieunhi", "Thiếu nhi", ],
+    ["trutinh", "trutinh", "Trữ tình", ],
+)
+type_list: dict = {stt: [theloai[0], theloai[1]] for stt, theloai in enumerate(danhmuc)}
+class_list: dict = {stt: theloai[2] for stt, theloai in enumerate(danhmuc)}
 
 # Define processing parameters
 SR = 22050
@@ -45,7 +56,7 @@ VAL_RATE = 0.15
 TEST_RATE = 0.1
 
 # Input/ Output
-N_CLASS = 5
+N_CLASS = 9
 INPUT_SHAPE = (128, 1292)
 
 # Num of samples of each class
@@ -54,6 +65,10 @@ NUM_OF_CATRU = len(os.listdir(os.path.join(RAW_ROOT, "catru")))
 NUM_OF_CHAUVAN = len(os.listdir(os.path.join(RAW_ROOT, "chauvan")))
 NUM_OF_CHEO = len(os.listdir(os.path.join(RAW_ROOT, "cheo")))
 NUM_OF_HATXAM = len(os.listdir(os.path.join(RAW_ROOT, "hatxam")))
+NUM_OF_CACHMANG = len(os.listdir(os.path.join(RAW_ROOT, "cachmang")))
+NUM_OF_NHACTRE = len(os.listdir(os.path.join(RAW_ROOT, "nhactre")))
+NUM_OF_THIEUNHI = len(os.listdir(os.path.join(RAW_ROOT, "thieunhi")))
+NUM_OF_TRUTINH = len(os.listdir(os.path.join(RAW_ROOT, "trutinh")))
 
 
 # Data augmentation configs
