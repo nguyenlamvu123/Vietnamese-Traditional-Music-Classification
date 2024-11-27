@@ -69,7 +69,6 @@ def load_best_model(model_index, val_set):
     best_model.compile(loss = LOSS, optimizer = OPTIMIZER, metrics=metrics)
     print("The best model's metrics: ")
     best_model.evaluate(val_set)
-    best_model.save(f'{SAVED_MODEL_PATH}{os.sep}best_model_{model_index}.keras')  # You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format
     return best_model
 
 def train_model(model_index, train_set, val_set, test_set):
@@ -86,14 +85,17 @@ def train_model(model_index, train_set, val_set, test_set):
         model1, checkpoint1, early1 = get_model1(INPUT_SHAPE, N_CLASS)
         model_history = fit_model(model1, checkpoint1, early1, train_set=train_set, val_set=val_set, model_index=1)
         Validation_plot(1, model_history)
+        model1.save(f'{SAVED_MODEL_PATH}{os.sep}best_model_1.keras')
     if model_index in (0, 2, ):
         model2, checkpoint2, early2 = get_model2(INPUT_SHAPE, N_CLASS)
         model_history = fit_model(model2, checkpoint2, early2, train_set=train_set, val_set=val_set, model_index=2)
         Validation_plot(2, model_history)
+        model2.save(f'{SAVED_MODEL_PATH}{os.sep}best_model_2.keras')
     if model_index in (0, 3, ):
         model3, checkpoint3, early3 = get_model3(INPUT_SHAPE, N_CLASS)
         model_history = fit_model(model3, checkpoint3, early3, train_set=train_set, val_set=val_set, model_index=3)
         Validation_plot(3, model_history)
+        model3.save(f'{SAVED_MODEL_PATH}{os.sep}best_model_3.keras')
     if model_history is None:
         raise Exception("Sorry, there are just 3 models")
     return load_best_model(model_index = model_index, val_set=val_set)

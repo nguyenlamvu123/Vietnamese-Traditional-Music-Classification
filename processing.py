@@ -46,7 +46,7 @@ class Preprocessing():
                 index = i
                 self.samples[index] = {}
                 i = padding(i)
-                self.samples[index]["dir"] = self.root + os.sep + type_list[self.type_index][0] + os.sep + type_list[self.type_index][1] + "." + i + ".wav"
+                self.samples[index]["dir"] = self.root + os.sep  + type_list[self.type_index][0] + os.sep + type_list[self.type_index][1] + "." + i + ".wav"
                 # self.samples[index]["dir"] = os.path.join(self.root, type_list[self.type_index][0], type_list[self.type_index][1] + "." + i + ".wav")
 
         return self.samples
@@ -151,31 +151,14 @@ def end_to_end_process(raw_root, save_root, dataset_root, train_root, val_root, 
 if __name__ == "__main__":
 
 # -----------END-TO-END PROCESS EACH CLASS---------------------------------
-
-    end_to_end_process(raw_root=RAW_ROOT, save_root=FOLDER_ROOT, dataset_root=DATASET_ROOT, 
-                            train_root=TRAIN_ROOT, val_root=VAL_ROOT, test_root=TEST_ROOT, 
-                            type_index=0, 
-                            num_of_samples=NUM_OF_CAILUONG)
-    
-
-    end_to_end_process(raw_root=RAW_ROOT, save_root=FOLDER_ROOT, dataset_root=DATASET_ROOT, 
-                            train_root=TRAIN_ROOT, val_root=VAL_ROOT, test_root=TEST_ROOT, 
-                            type_index=1, 
-                            num_of_samples=NUM_OF_CATRU)
-
-    end_to_end_process(raw_root=RAW_ROOT, save_root=FOLDER_ROOT, dataset_root=DATASET_ROOT, 
-                            train_root=TRAIN_ROOT, val_root=VAL_ROOT, test_root=TEST_ROOT, 
-                            type_index=2, 
-                            num_of_samples=NUM_OF_CHAUVAN)
-    
-
-    end_to_end_process(raw_root=RAW_ROOT, save_root=FOLDER_ROOT, dataset_root=DATASET_ROOT, 
-                            train_root=TRAIN_ROOT, val_root=VAL_ROOT, test_root=TEST_ROOT, 
-                            type_index=3, 
-                            num_of_samples=NUM_OF_CHEO)
-    
-
-    end_to_end_process(raw_root=RAW_ROOT, save_root=FOLDER_ROOT, dataset_root=DATASET_ROOT, 
-                            train_root=TRAIN_ROOT, val_root=VAL_ROOT, test_root=TEST_ROOT, 
-                            type_index=4, 
-                            num_of_samples=NUM_OF_HATXAM)
+    for thutu, danhmuc in enumerate(amount_of_each_genre):
+        end_to_end_process(
+            raw_root=RAW_ROOT,
+            save_root=FOLDER_ROOT,
+            dataset_root=DATASET_ROOT,
+            train_root=TRAIN_ROOT,
+            val_root=VAL_ROOT,
+            test_root=TEST_ROOT,
+            type_index=thutu,
+            num_of_samples=amount_of_each_genre[danhmuc]
+        )
