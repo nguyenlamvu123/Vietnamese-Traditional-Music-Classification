@@ -16,19 +16,6 @@ AUDIO_FROM_USER = os.path.join(path, "audio_from_user")  # Store audio uploaded 
 
 demo = False
 
-# For testing create these below folders
-# RAW_ROOT = 'rawdata'
-# FOLDER_ROOT = "check_mel-images"
-# DATASET_ROOT = "check_dataset"
-# TRAIN_ROOT = "check_dataset\\train"
-# VAL_ROOT = "check_dataset\\val"
-# TEST_ROOT = "check_dataset\\test"
-# CHECKPOINT_FILEPATH = 'check_checkpoint'
-# SAVED_MODEL_PATH = 'check_model'
-# TEST_AUDIO_PATH = "test_audio"
-# TEST_IMAGES_ROOT = "test_images"    # Store mel-spec img of new audio to predict
-# AUDIO_FROM_USER = "audio_from_user" # Store audio uploaded from user in app
-
 
 # Define global variable
 danhmuc: tuple = (
@@ -37,8 +24,8 @@ danhmuc: tuple = (
     # ["chauvan", "Chauvan", "Chầu văn", ],
     # ["cheo", "Cheo", "Chèo", ],
     # ["hatxam", "Xam", "Hát xẩm", ],
-    # ["cachmang", "cachmang", "Cách mạng", ],
-    # ["nhactre", "nhactre", "Nhạc trẻ", ],
+    ["cachmang", "cachmang", "Cách mạng", ],
+    ["nhactre", "nhactre", "Nhạc trẻ", ],
     ["thieunhi", "thieunhi", "Thiếu nhi", ],
     ["trutinh", "trutinh", "Trữ tình", ],
 )
@@ -66,8 +53,8 @@ amount_of_each_genre: dict = {
     # "NUM_OF_CHAUVAN": len(os.listdir(os.path.join(RAW_ROOT, "chauvan"))),
     # "NUM_OF_CHEO": len(os.listdir(os.path.join(RAW_ROOT, "cheo"))),
     # "NUM_OF_HATXAM": len(os.listdir(os.path.join(RAW_ROOT, "hatxam"))),
-    # "NUM_OF_CACHMANG": len(os.listdir(os.path.join(RAW_ROOT, "cachmang"))),
-    # "NUM_OF_NHACTRE": len(os.listdir(os.path.join(RAW_ROOT, "nhactre"))),
+    "NUM_OF_CACHMANG": len(os.listdir(os.path.join(RAW_ROOT, "cachmang"))),
+    "NUM_OF_NHACTRE": len(os.listdir(os.path.join(RAW_ROOT, "nhactre"))),
     "NUM_OF_THIEUNHI": len(os.listdir(os.path.join(RAW_ROOT, "thieunhi"))),
     "NUM_OF_TRUTINH": len(os.listdir(os.path.join(RAW_ROOT, "trutinh"))),
 }
