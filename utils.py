@@ -38,21 +38,34 @@ def mp3_2_wav(dir, dst, sample_rate = SR):
 
 
 def break_down_downloaded_data(
-        originaldata=os.path.join('/', 'home', 'zaibachkhoa', 'Downloads', 'GTZAN Dataset - Music Genre Classification', 'genres_original_vnmesemusi_cachmang-nhactre-thieunhi-trutinh', 'genres_original_'),
-        rawdata='rawdata',
+        originaldata=os.path.join('/', 'home', 'zaibachkhoa', 'Downloads', 'GTZAN Dataset - Music Genre Classification', 'genres_original_vnmesemusi_cachmang-nhactre-thieunhi-trutinh', 'genres_original'),
+        lim: int = 500,
+        onlygenre: str or None = None,
 ):
-    "breaks down data into series of 30 seconds songs"
+    """
+    breaks down data into series of 30 seconds songs
+    TODO parameter
+    """
     for theloai_ in os.listdir(originaldata):
+        if onlygenre is not None:
+            if not theloai_ == onlygenre:
+                continue
         theloai = theloai_.replace('_', '')
-        os.mkdir(os.path.join(rawdata, theloai))
+        assert os.path.isdir(os.path.join(RAW_ROOT, theloai))
         i = 0
         for baihat in os.listdir(os.path.join(originaldata, theloai_)):
-            if not baihat.endswith('.mp3'):
-                print('@@@@@@@@@@@@@@@@@@', baihat)
-                continue
             dir = os.path.join(originaldata, theloai_, baihat)
             dst = os.path.join(originaldata, theloai_, baihat[:-len('.mp3')] + '.wav')
-            mp3_2_wav(dir, dst)
+            mp3: bool = False
+            if not any([
+                baihat.endswith('.mp3'),
+                baihat.endswith('.wav')
+            ]):
+                print('@@@@@@@@@@@@@@@@@@', baihat)
+                continue
+            if baihat.endswith('.mp3'):
+                mp3 = True
+                mp3_2_wav(dir, dst)
             newAudio = AudioSegment.from_wav(dst)
             i_ = 0
             t1 = 0
@@ -64,16 +77,21 @@ def break_down_downloaded_data(
                     break
                 t2 *= 1000
                 newAudio_ = newAudio[t1:t2]
-                newAudio_.export(os.path.join(rawdata, theloai, f'{theloai}.{str(i).zfill(3)}.wav'), format="wav")
+                try:
+                    newAudio_.export(os.path.join(RAW_ROOT, theloai, f'{theloai}.{str(i).zfill(3)}.wav'), format="wav")
+                except Exception as e:
+                    print()
+                    continue
                 del newAudio_
                 i += 1
-                if i > 499:
+                if i > lim-1:
                     break
                 i_ += 1
                 t1 /= 1000
-            os.remove(dst)
+            if mp3:
+                os.remove(dst)
             print(f'{dir}_______{i}')
-            if i > 499:
+            if i > lim-1:
                 break
 
 
@@ -466,3 +484,11 @@ def PROD_predict(audio_dir, src_folder, save_dir, model1, model2, model3, unit_l
         samples_split = []
 
     return (y_pred_index, y_pred_class) if not gra else {k: v for k, v in resdic.items() if v}
+
+
+if __name__ == '__main__':
+    break_down_downloaded_data(
+        # originaldata=None,
+        lim=100,
+        onlygenre='cach_mang',
+    )
