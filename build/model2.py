@@ -1,14 +1,20 @@
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping
-import os, sys
+import os
+import sys
+sys.path.append('\VN-music-classification')  # Add parent directory to import varibles from config.py
+from config import *
+import os
+import sys
 sys.path.append('\VN-music-classification')  # Add parent directory to import varibles from config.py
 from config import *
 
 
 
 def get_model2(input_shape = INPUT_SHAPE, n_class = N_CLASS):
-    model = tf.keras.Sequential(layers=[
+
+    model2= tf.keras.Sequential(layers=[
             tf.keras.layers.InputLayer(input_shape= (input_shape[0], input_shape[1], 3)),
             # first convolution
             tf.keras.layers.Conv2D(32, (5, 5), padding='same', activation="relu"),
@@ -25,17 +31,17 @@ def get_model2(input_shape = INPUT_SHAPE, n_class = N_CLASS):
             tf.keras.layers.Dense(64, activation="relu"),
             tf.keras.layers.Dense(n_class, activation="softmax")
         ])
-
-    ckptdir = os.path.join(CHECKPOINT_FILEPATH, 'model2')
-    if not os.path.exists(ckptdir):
-        os.makedirs(ckptdir)
+    
+    # Create dir to save checkpoint
+    if not os.path.exists(CHECKPOINT_FILEPATH + '\\model2'):
+        os.makedirs(CHECKPOINT_FILEPATH + '\\model2')
 
     # Define checkpoint
-    checkpoint= tf.keras.callbacks.ModelCheckpoint(
-    filepath = os.path.join(ckptdir, 'model2_{epoch:02d}_{val_accuracy:.4f}.keras'),  # Keras 3 only supports .keras models, versions < 3 still support .h5  # https://stackoverflow.com/questions/78692707/valueerror-the-filepath-provided-must-end-in-keras-keras-model-format-rec
+    checkpoint2= tf.keras.callbacks.ModelCheckpoint(
+    filepath = CHECKPOINT_FILEPATH + '\\model2' + '\\model2_{epoch:02d}_{val_accuracy:.4f}.h5',
     monitor = CHECKPOINT_MONITOR,
     save_best_only=True,
-    # save_weights_only=True,
+    save_weights_only=True,
     verbose=1
     )
 
@@ -46,4 +52,6 @@ def get_model2(input_shape = INPUT_SHAPE, n_class = N_CLASS):
         mode='auto',
         baseline= None,
         restore_best_weights= True)
-    return model, checkpoint, early
+
+    return model2, checkpoint2, early
+    
