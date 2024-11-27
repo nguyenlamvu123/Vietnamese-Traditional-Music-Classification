@@ -361,7 +361,7 @@ def predict_new(audio_dir, src_folder, model, save_dir, unit_length = 661500):
 
 
 
-def PROD_predict(audio_dir, src_folder, save_dir, model1, model2, model3, unit_length = 661500):
+def PROD_predict(audio_dir, src_folder, save_dir, model1, model2, model3, unit_length = 661500, gra: bool = False):
     """
     Predict audio of any length using PROD fusion of three models predicted probability vectors
     Split each audio into several equal sample which length = unit_length, then feed to NN
@@ -414,6 +414,7 @@ def PROD_predict(audio_dir, src_folder, save_dir, model1, model2, model3, unit_l
     # List of samples of each audio
     samples_split = []
     y_pred_split = []
+    resdic = {cl: list() for cl in class_list.values()}
 
     for dir in audio_dir:
         if dir.endswith(".mp3"):
@@ -422,7 +423,7 @@ def PROD_predict(audio_dir, src_folder, save_dir, model1, model2, model3, unit_l
             mp3_2_wav(dir, wav_dir)
             dir = wav_dir       # Take wav dir for sampling
         print(dir)
-        audio, sr = lb.load(dir)
+        audio, sr = lb.load(dir, mono=True)
         if (len(audio) >= unit_length):
             # Number of sample of each audio
             nums_of_samples = len(audio) // unit_length
@@ -430,13 +431,13 @@ def PROD_predict(audio_dir, src_folder, save_dir, model1, model2, model3, unit_l
             err = "Audio length must be greater than 30s"
             print(err)
             return err
-        for i in range(0, nums_of_samples):
+        for i in range(nums_of_samples):
             curr_sample = audio[i * unit_length : i * unit_length + unit_length]
             if (len(curr_sample) != unit_length): # Cannot sampling this curr_sample
                 break
             samples_split.append(audio[i * unit_length : i * unit_length + unit_length])
 
-        file_name = dir.split("\\")[-1][:-4]
+        file_name = dir.split(os.sep)[-1][:-4]
 
         input_data = process(samples_split, save_dir, file_name, False)
 
@@ -450,17 +451,20 @@ def PROD_predict(audio_dir, src_folder, save_dir, model1, model2, model3, unit_l
 
         # PROD fusion
         for i in range(pred_candidates1.shape[0]):
-          PROD_probs.append(1/3 * pred_candidates1[i] * pred_candidates2[i] * pred_candidates3[i])
+            PROD_probs.append(1/3 * pred_candidates1[i] * pred_candidates2[i] * pred_candidates3[i])
 
         pred_index_candidates = [np.argmax(sample) for sample in PROD_probs]
 
         pred_index = max(pred_index_candidates, key = pred_index_candidates.count)
         pred_class = class_list[pred_index]
 
+        resdic[pred_class].append(file_name)
         y_pred_index.append(pred_index)
         y_pred_class.append(pred_class)
 
         # Reset samples_split after passing one dir of audio_dir
         samples_split = []
+
+    return (y_pred_index, y_pred_class) if not gra else {k: v for k, v in resdic.items() if v}
 
     return y_pred_index, y_pred_class
