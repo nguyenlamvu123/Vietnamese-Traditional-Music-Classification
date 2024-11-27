@@ -1,8 +1,4 @@
 /rawdata
 notebook.ipynb
-*.png
-*.keras
-*.h5
-build/__pycache__/
-mel-images/
-.pyc
+
+dataset/
