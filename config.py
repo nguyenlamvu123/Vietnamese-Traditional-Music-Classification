@@ -14,7 +14,7 @@ TEST_AUDIO_PATH = os.path.join(path, "test_audio")
 TEST_IMAGES_ROOT = os.path.join(path, "test_images")  # Store mel-spec img of new audio to predict
 AUDIO_FROM_USER = os.path.join(path, "audio_from_user")  # Store audio uploaded from user in app
 
-demo = False 
+demo = False
 
 # For testing create these below folders
 # RAW_ROOT = 'rawdata'
@@ -32,13 +32,13 @@ demo = False
 
 # Define global variable
 danhmuc: tuple = (
-    ["cailuong", "CaiLuong", "Cải lương", ],
-    ["catru", "Catru", "Ca trù", ],
-    ["chauvan", "Chauvan", "Chầu văn", ],
-    ["cheo", "Cheo", "Chèo", ],
-    ["hatxam", "Xam", "Hát xẩm", ],
-    ["cachmang", "cachmang", "Cách mạng", ],
-    ["nhactre", "nhactre", "Nhạc trẻ", ],
+    # ["cailuong", "CaiLuong", "Cải lương", ],
+    # ["catru", "Catru", "Ca trù", ],
+    # ["chauvan", "Chauvan", "Chầu văn", ],
+    # ["cheo", "Cheo", "Chèo", ],
+    # ["hatxam", "Xam", "Hát xẩm", ],
+    # ["cachmang", "cachmang", "Cách mạng", ],
+    # ["nhactre", "nhactre", "Nhạc trẻ", ],
     ["thieunhi", "thieunhi", "Thiếu nhi", ],
     ["trutinh", "trutinh", "Trữ tình", ],
 )
@@ -56,18 +56,18 @@ VAL_RATE = 0.15
 TEST_RATE = 0.1
 
 # Input/ Output
-N_CLASS = 9
+N_CLASS = len(danhmuc)
 INPUT_SHAPE = (128, 1292)
 
 # Num of samples of each class
 amount_of_each_genre: dict = {
-    "NUM_OF_CAILUONG": len(os.listdir(os.path.join(RAW_ROOT, "cailuong"))),
-    "NUM_OF_CATRU": len(os.listdir(os.path.join(RAW_ROOT, "catru"))),
-    "NUM_OF_CHAUVAN": len(os.listdir(os.path.join(RAW_ROOT, "chauvan"))),
-    "NUM_OF_CHEO": len(os.listdir(os.path.join(RAW_ROOT, "cheo"))),
-    "NUM_OF_HATXAM": len(os.listdir(os.path.join(RAW_ROOT, "hatxam"))),
-    "NUM_OF_CACHMANG": len(os.listdir(os.path.join(RAW_ROOT, "cachmang"))),
-    "NUM_OF_NHACTRE": len(os.listdir(os.path.join(RAW_ROOT, "nhactre"))),
+    # "NUM_OF_CAILUONG": len(os.listdir(os.path.join(RAW_ROOT, "cailuong"))),
+    # "NUM_OF_CATRU": len(os.listdir(os.path.join(RAW_ROOT, "catru"))),
+    # "NUM_OF_CHAUVAN": len(os.listdir(os.path.join(RAW_ROOT, "chauvan"))),
+    # "NUM_OF_CHEO": len(os.listdir(os.path.join(RAW_ROOT, "cheo"))),
+    # "NUM_OF_HATXAM": len(os.listdir(os.path.join(RAW_ROOT, "hatxam"))),
+    # "NUM_OF_CACHMANG": len(os.listdir(os.path.join(RAW_ROOT, "cachmang"))),
+    # "NUM_OF_NHACTRE": len(os.listdir(os.path.join(RAW_ROOT, "nhactre"))),
     "NUM_OF_THIEUNHI": len(os.listdir(os.path.join(RAW_ROOT, "thieunhi"))),
     "NUM_OF_TRUTINH": len(os.listdir(os.path.join(RAW_ROOT, "trutinh"))),
 }

@@ -99,7 +99,7 @@ seaborn
 
 - Run  ``processing.py``. After running, ``mel-images`` folder contains all the mel-spectrogram images extracted from 5 classes and ``dataset`` folder contains train/val/test folder of images of 5 classes. Constructing the dataset is completed.
 
-- At ``build/train_model.py``, change the model_index to 1, 2, 3 at the last line to train model1, model2 or model3. Then, run this file.
+- At ``trainmodel.py``, change the model_index to 1, 2, 3 -or 0 is all- at train_model() function to train model1, model2, model3 or all. Then, run this file.
 After running, the best model ``.h5`` file will be saved at ``model`` folder. Training is completed.
 
 - Run Streamlit app at ``app/app.py``, upload your new audios and get prediction. The audios uploaded on app will be saved at ``audio_from_user`` folder. Run app using this command:
